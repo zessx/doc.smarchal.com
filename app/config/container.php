@@ -17,9 +17,10 @@ return [
     'source_path' => DI\string('{app_path}/src'),
     'translations_path' => DI\string('{app_path}/translations'),
     'views_path' => DI\string('{app_path}/views'),
+    'shared_path' => realpath(dirname(__DIR__, 2) . '/../../shared/'),
 
     /** Array of application files (to be hidden) */
-    'app_files' => ['app', 'index.php', 'robots.txt', '.hidden'],
+    'app_files' => ['app', 'index.php', '.hidden'],
 
     /** Array of application middlewares */
     'middlewares' => function (ContainerInterface $container): array {

@@ -117,7 +117,8 @@ return [
      * Default value: []
      */
     'hidden_files' => [
-        // ...
+        'private',
+        'robots.txt'
     ],
 
     /**

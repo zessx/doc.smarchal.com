@@ -70,9 +70,15 @@ class FinderFactory
     protected function isHidden(SplFileInfo $file): bool
     {
         if (! isset($this->pattern)) {
-            $this->pattern = Glob::pattern(sprintf('%s{%s}', Glob::escape(
-                $this->config->get('base_path') . DIRECTORY_SEPARATOR
-            ), $this->hiddenFiles->implode(',')));
+            $this->pattern = Glob::pattern(sprintf('{%s,%s}{%s}',
+                Glob::escape(
+                    $this->config->get('base_path') . DIRECTORY_SEPARATOR
+                ),
+                Glob::escape(
+                    $this->config->get('shared_path') . DIRECTORY_SEPARATOR
+                ),
+                $this->hiddenFiles->implode(',')
+            ));
         }
 
         return $this->pattern->matchStart($file->getRealPath());
