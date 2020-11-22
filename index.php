@@ -1,53 +1,29 @@
 <?php
 
-    // Include the DirectoryLister class
-    require_once('resources/DirectoryLister.php');
+use App\Bootstrap\AppManager;
+use DI\ContainerBuilder;
+use Dotenv\Dotenv;
 
-    // Initialize the DirectoryLister object
-    $lister = new DirectoryLister();
+require __DIR__ . '/app/vendor/autoload.php';
 
-    // Restrict access to current directory
-    ini_set('open_basedir', getcwd());
+// Set file access restrictions
+ini_set('open_basedir', __DIR__ . ':' . realpath(__DIR__ . '/../../shared/'));
 
-    // Return file hash
-    if (isset($_GET['hash'])) {
+// Initialize environment variable handler
+Dotenv::createUnsafeImmutable(__DIR__)->safeLoad();
 
-        // Get file hash array and JSON encode it
-        $hashes = $lister->getFileHash($_GET['hash']);
-        $data   = json_encode($hashes);
+// Initialize the container
+$container = (new ContainerBuilder)->addDefinitions(
+    ...glob(__DIR__ . '/app/config/*.php')
+);
 
-        // Return the data
-        die($data);
+// Compile the container
+if (! filter_var(getenv('APP_DEBUG'), FILTER_VALIDATE_BOOL)) {
+    $container->enableCompilation(__DIR__ . '/app/cache');
+}
 
-    }
+// Initialize the application
+$app = $container->build()->call(AppManager::class);
 
-    if (isset($_GET['zip'])) {
-
-        $dirArray = $lister->zipDirectory($_GET['zip']);
-
-    } else {
-
-        // Initialize the directory array
-        if (isset($_GET['dir'])) {
-            $dirArray = $lister->listDirectory($_GET['dir']);
-        } else {
-            $dirArray = $lister->listDirectory('.');
-        }
-
-        // Define theme path
-        if (!defined('THEMEPATH')) {
-            define('THEMEPATH', $lister->getThemePath());
-        }
-
-        // Set path to theme index
-        $themeIndex = $lister->getThemePath(true) . '/index.php';
-
-        // Initialize the theme
-        if (file_exists($themeIndex)) {
-            include($themeIndex);
-        } else {
-            die('ERROR: Failed to initialize theme');
-        }
-
-    }
-
+// Engage!
+$app->run();
