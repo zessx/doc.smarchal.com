@@ -33,7 +33,7 @@ class SearchController
     {
         $search = $request->getQueryParams()['search'];
 
-        $files = $this->finder->in('.')->name(
+        $files = $this->finder->in('./public')->name(
             $search ? sprintf('/(?:.*)%s(?:.*)/i', preg_quote($search, '/')) : ''
         );
 
