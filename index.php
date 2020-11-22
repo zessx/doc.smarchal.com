@@ -6,6 +6,9 @@ use Dotenv\Dotenv;
 
 require __DIR__ . '/app/vendor/autoload.php';
 
+// Ensure cache can be cleared
+umask(0002);
+
 // Set file access restrictions
 ini_set('open_basedir', __DIR__ . ':' . realpath(__DIR__ . '/../../shared/'));
 
